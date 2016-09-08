@@ -1,0 +1,270 @@
+/* SKILL_ICT
+This table must be created first as other tables use data in this table: */
+
+INSERT into skill_ict (skill_id, skill, base_skill_rate) values (1,'Project Manager', 1000);
+INSERT into skill_ict (skill_id, skill, base_skill_rate) values (2,'Team Leader', 800);
+INSERT into skill_ict (skill_id, skill, base_skill_rate) values (3,'C++ Programmer', 500);
+INSERT into skill_ict (skill_id, skill, base_skill_rate) values (4,'Java Programmer', 500);
+INSERT into skill_ict (skill_id, skill, base_skill_rate) values (5,'Unix Tester', 400);
+INSERT into skill_ict (skill_id, skill, base_skill_rate) values (6,'Linux Programmer', 600);
+INSERT into skill_ict (skill_id, skill, base_skill_rate) values (7,'Java Tester', 350);
+INSERT into skill_ict (skill_id, skill, base_skill_rate) values (8,'Documentation', 200);
+INSERT into skill_ict (skill_id, skill, base_skill_rate) values (9,'Rollout Engineer', 700);
+INSERT into skill_ict (skill_id, skill, base_skill_rate) values (10,'Support Engineer', 700);
+
+/* RESOURCE_ICT
+This table uses values from skill_ict to populate its table with values. It also uses modular arithmetic as a hashing algorithm to ensure different teams and skills are allocated to each of the 500 rows: */
+
+Declare
+
+v_skill_id number; -- track resource_id linked with skill_id
+v_team_id number; -- track team_id
+v_base_rate skill_ict.base_skill_rate%type; -- base market rate for a skill type
+v_experience resource_ict.experience%type; -- experience rating of resource
+v_num_employees number;
+v_daily_rate number;
+
+Begin
+
+v_num_employees := 500;
+
+for i in 1..v_num_employees -- loop through all employees
+Loop
+v_team_id := 1+1; -- creates unique team_id to satisfy PK constraint
+v_skill_id := mod(i,10)+1; -- 10 skill sets are assumed
+
+SELECT sk.base_skill_rate into v_base_rate
+FROM skill_ict sk where sk.skill_id = v_skill_id;
+if i <= 350 then
+	v_experience := 'Junior';
+	v_daily_rate := v_base_rate + 100;
+elsif (i > 350) And (i <= 450) then
+	v_experience := 'Senior';
+	v_daily_rate := v_base_rate + 200;
+elsif (i > 450) and (i <= v_num_employees) then
+v_experience := 'Expert';
+v_daily_rate := v_base_rate + 300;
+end if;
+INSERT into resource_ict values (i,v_team_id,v_skill_id,v_experience, v_daily_rate);
+
+end loop;
+end;
+
+/* TEAM_ICT
+The most complex table, team_ict, is now created. A CASE statement is used to control how variations in the data are created while each of the 500 rows are being populated: */
+
+Declare
+
+v_resource_id number;
+v_team_id number;
+v_team_rating team_ict.team_rating%type;
+v_start_date team_ict.start_date%type;
+v_end_date team_ict.end_date%type;
+v_days number;
+v_num_teams number;
+v_num_resources number;
+
+Begin
+
+v_num_resources := 500;
+v_num_teams := 25;
+
+v_start_date := TO_DATE('01-01-2016','DD-MM-YYYY');
+v_end_date := TO_DATE('01-04-2016','DD-MM-YYYY');
+
+for i in 1..v_Num_resources
+Loop
+
+v_resource_id := i;
+v_team_id := i+1;
+
+if (i <= 100) then 
+	v_team_rating := 1; -- first 100 teams have a rating of 1
+elsif (i > 100) And (i <= 300) then
+	v_team_rating := 2; -- next 200 teams have a rating of 2
+Elsif (i > 300) then
+	v_team_rating := 3; -- final 200 teams have a rating of 3
+end if;
+
+v_days := v_end_date - v_start_date; -- calculate number of days resource is working in team
+
+INSERT into team_ict values (v_team_id,v_resource_id,v_team_rating, v_start_date, v_end_date,v_days);
+
+case
+
+when (i >= 21) and (i <= 40) then
+
+	v_start_date := TO_DATE('01-02-2016','DD-MM-YYYY');
+	v_end_date := add_months(v_start_date,3);
+
+when (i >= 41) and (i <= 60) then
+
+	v_start_date := TO_DATE('01-03-2016','DD-MM-YYYY');
+	v_end_date := add_months(v_start_date,3);
+
+when (i >= 61) and (i <= 80) then
+
+	v_start_date := TO_DATE('01-04-2016','DD-MM-YYYY');
+	v_end_date := add_months(v_start_date,3);
+
+when (i >= 81) and (i <= 100) then
+
+	v_start_date := TO_DATE('01-05-2016','DD-MM-YYYY');
+	v_end_date := add_months(v_start_date,3); -- These resources were assigned to projects for 3 months.
+
+when (i >= 101) and (i <= 120) then
+
+	v_start_date := TO_DATE('01-06-2016','DD-MM-YYYY');
+	v_end_date := add_months(v_start_date,2); -- These resources were assigned to projects for 2 months.
+
+when (i >= 121) and (i <= 140) then
+
+	v_start_date := TO_DATE('01-07-2016','DD-MM-YYYY');
+	v_end_date := add_months(v_start_date,2); -- These resources were assigned to projects for 2 months.
+
+when (i >= 141) and (i <= 160) then
+
+	v_start_date := TO_DATE('01-08-2016','DD-MM-YYYY');
+	v_end_date := add_months(v_start_date,2); -- These resources were assigned to projects for 2 months.
+
+when (i >= 161) and (i <= 180) then
+
+	v_start_date := TO_DATE('01-09-2016','DD-MM-YYYY');
+	v_end_date := add_months(v_start_date,2); -- These resources were assigned to projects for 2 months.
+
+when (i >= 181) and (i <= 200) then
+
+	v_start_date := TO_DATE('01-10-2016','DD-MM-YYYY');
+	v_end_date := add_months(v_start_date,2); -- These resources were assigned to projects for 2 months.
+
+when (i >= 201) and (i <= 220) then 
+
+	v_start_date := TO_DATE('01-11-2016','DD-MM-YYYY');
+	v_end_date := add_months(v_start_date,2); /* These resources were assigned to projects for 2 months.
+
+when (i >= 221) and (i <= 240) then
+
+	v_start_date := TO_DATE('01-12-2016','DD-MM-YYYY');
+	v_end_date := add_months(v_start_date,2); -- These resources were assigned to projects for 2 months.
+
+when (i >= 241) and (i <= 260) then
+
+	v_start_date := TO_DATE('01-01-2016','DD-MM-YYYY');
+	v_end_date := add_months(v_start_date,2); -- These resources were assigned to projects for 2 months.
+
+when (i >= 261) and (i <= 280) then
+
+	v_start_date := TO_DATE('01-02-2016','DD-MM-YYYY');
+	v_end_date := add_months(v_start_date,2); -- These resources were assigned to projects for 2 months.
+
+when (i >= 281) and (i <= 300) then
+
+	v_start_date := TO_DATE('01-03-2016','DD-MM-YYYY');
+	v_end_date := add_months(v_start_date,3); -- These resources were assigned to projects for 3 months.
+
+when (i >= 301) and (i <= 320) then 
+
+	v_start_date := TO_DATE('01-04-2016','DD-MM-YYYY');
+	v_end_date := add_months(v_start_date,2); -- These resources were assigned to projects for 2 months.
+
+when (i >= 321) and (i <= 340) then
+
+	v_start_date := TO_DATE('01-05-2016','DD-MM-YYYY');
+	v_end_date := add_months(v_start_date,2); -- These resources were assigned to projects for 2 months.
+
+when (i >= 341) and (i <= 360) then
+
+	v_start_date := TO_DATE('01-06-2016','DD-MM-YYYY');
+	v_end_date := add_months(v_start_date,2); -- These resources were assigned to projects for 2 months.
+
+when (i >= 361) and (i <= 380) then
+
+	v_start_date := TO_DATE('01-07-2016','DD-MM-YYYY');
+	v_end_date := add_months(v_start_date,2); -- These resources were assigned to projects for 2 months.
+
+when (i >= 381) and (i <= 400) then
+
+	v_start_date := TO_DATE('01-08-2016','DD-MM-YYYY');
+	v_end_date := add_months(v_start_date,2); -- These resources were assigned to projects for 2 months.
+
+when (i >= 401) and (i <= 420) then
+
+	v_start_date := TO_DATE('01-09-2016','DD-MM-YYYY');
+	v_end_date := add_months(v_start_date,2); -- These resources were assigned to projects for 2 months.
+
+when (i >= 421) and (i <= 440) then
+
+	v_start_date := TO_DATE('01-10-2016','DD-MM-YYYY');
+	v_end_date := add_months(v_start_date,2); -- These resources were assigned to projects for 2 months.
+
+when (i >= 441) and (i <= 460) then
+
+	v_start_date := TO_DATE('01-11-2016','DD-MM-YYYY');
+	v_end_date := add_months(v_start_date,2); -- These resources were assigned to projects for 2 months.
+
+when (i >= 461) and (i <= 480) then 
+
+	v_start_date := TO_DATE('01-12-2016','DD-MM-YYYY');
+	v_end_date := add_months(v_start_date,2); -- These resources were assigned to projects for 2 months.
+
+else -- default is (i >= 481) and (i <= 500) then
+
+	v_start_date := TO_DATE('01-01-2017','DD-MM-YYYY');
+	v_end_date := add_months(v_start_date,2);
+end case;
+end loop;
+end;
+
+-- PROJECT_ICT
+Declare
+
+v_team_id number;
+v_project_id project_ict.project_id%type;
+v_budget project_ict.budget%type;
+v_start_date project_ict.start_date%type;
+v_end_date project_ict.end_date%type;
+v_num_teams number;
+
+Begin
+
+v_num_teams := 25; /* It is assumed that there are 25 teams in the company currently working on client projects. */
+
+v_start_date := TO_DATE('01-01-2016','DD-MM-YYYY'); /* It is assumed that the first project began on 01-01-2016 */
+
+for i in 1..v_num_teams
+Loop
+
+v_team_id := i+1;
+
+v_project_id := mod(v_team_id,v_num_teams)+1; /* This ensures that project_id differs from team_id. */
+v_budget := 1000000; /* In order to simplify profit/loss calculations for reports, it is assumed that every project has a client budget of 1000000. */
+
+v_end_date := add_months(v_start_date,2); -- assume that each project lasted 2 months
+
+INSERT into project_ict values (v_project_id,v_team_id,v_budget, v_start_date, v_end_date);
+
+v_start_date := add_months (v_start_date,1); /* Start date for each project increases by 1 month as the loop goes around. */
+end loop;
+end;
+
+-- CLIENT_ICT
+Declare
+
+v_client_id number;
+v_num_projects number;
+v_client_id_index number;
+
+Begin
+
+v_num_projects := 25; -- firm has 25 projects
+v_client_id_index := 10000; -- client_id starts with 10000
+
+for i in 1..v_Num_projects
+Loop
+
+v_client_id := mod(i,25)+v_Client_ID_index; /* Modular arithmetic is used to match clients to projects. */
+
+INSERT into client_ict values (v_client_id,i); /* For example, client 10001 will have projects 1,6,11... */
+end loop;
+end;
+

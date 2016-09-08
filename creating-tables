@@ -1,0 +1,29 @@
+CREATE TABLE client_ict
+(client_id NUMBER CONSTRAINT client_ict_client_id_pk PRIMARY KEY,
+project_id NUMBER NOT NULL);
+
+CREATE TABLE project_ict
+(project_id NUMBER CONSTRAINT project_ict_project_id_pk PRIMARY KEY,
+team_id NUMBER NOT NULL,
+budget NUMBER NOT NULL,
+start_date DATE,
+end_date DATE);
+
+CREATE TABLE team_ict
+(team_id NUMBER CONSTRAINT team_ict_team_id_pk PRIMARY KEY,
+resource_id NUMBER NOT NULL,
+team_rating NUMBER NOT NULL,
+start_date DATE,
+end_date DATE,
+days NUMBER NOT NULL);
+
+CREATE TABLE resource_ict
+(resource_id NUMBER CONSTRAINT resource_ict_resource_id_pk PRIMARY KEY, team_id NUMBER NOT NULL,
+skill_id NUMBER,
+experience VARCHAR2(20),
+daily_rate NUMBER);
+
+CREATE TABLE skill_ict
+(skill_id NUMBER CONSTRAINT skill_ict_skill_id_pk PRIMARY KEY,
+skill VARCHAR2(30),
+base_skill_rate NUMBER NOT NULL);
